@@ -218,6 +218,24 @@ func Default(def interface{}) {
 	a.SetDefault(def)
 }
 
+// Zero sets the zero value for an attribute.
+//
+// Zero must appear in an Attribute DSL.
+//
+// Zero takes one parameter: the default value.
+func Zero(zero interface{}) {
+	a, ok := eval.Current().(*expr.AttributeExpr)
+	if !ok {
+		eval.IncompatibleDSL()
+		return
+	}
+	if a.Type != nil && !a.Type.IsCompatible(zero) {
+		eval.ReportError("default value %#v is incompatible with attribute of type %s",
+			zero, expr.QualifiedTypeName(a.Type))
+		return
+	}
+	a.SetZero(zero)
+}
 // Example provides an example value for a type, a parameter, a header or any
 // attribute. Example supports two syntaxes: one syntax accepts two arguments
 // where the first argument is a summary describing the example and the second a

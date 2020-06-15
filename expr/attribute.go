@@ -417,7 +417,34 @@ func (a *AttributeExpr) FieldTag() (tag string, found bool) {
 	}
 	return a.Meta.Last("rpc:tag")
 }
+// HasZeroValue returns true if the attribute with the given name has a
+// zero value.
+func(a *AttributeExpr) HasZeroValue(attName string) bool{
+	return a.GetZero(attName) != nil
+}
 
+// GetZero gets the default value for the child attribute with the given
+// name. It returns nil if the child attribute with the given name does not
+// exist or if the child attribute does not have a default value.
+func (a *AttributeExpr) GetZero(attName string) interface{} {
+	if o := AsObject(a.Type); o != nil {
+		return o.Attribute(attName).ZeroValue
+	}
+	return nil
+}
+
+// SetDefault sets the default for the attribute. It also converts HashVal
+// and ArrayVal to map and slice respectively.
+func (a *AttributeExpr) SetZero(zero interface{}) {
+	switch actual := zero.(type) {
+	case MapVal:
+		a.ZeroValue = actual.ToMap()
+	case ArrayVal:
+		a.ZeroValue = actual.ToSlice()
+	default:
+		a.ZeroValue = actual
+	}
+}
 // HasDefaultValue returns true if the attribute with the given name has a
 // default value.
 func (a *AttributeExpr) HasDefaultValue(attName string) bool {

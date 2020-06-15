@@ -81,6 +81,11 @@ var TestTypesDSL = func() {
 		_ = Type("NestedArray", func() {
 			Attribute("nested_array", ArrayOf(ArrayOf(ArrayOf(Float64))))
 		})
+		_ = Type("Zero", func(){
+			Attribute("zero_value", String, func(){
+				Zero("zero_value")
+			})
+		})
 
 		_ = Type("TypeArray", func() {
 			Attribute("type_array", ArrayOf(SimpleArray))
